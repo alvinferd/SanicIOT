@@ -19,13 +19,13 @@ async def activation(request):
         async with pool.acquire() as conn:
             sql = '''
                     SELECT *
-                    FROM users where username='{0}'; 
+                    FROM user_person where username='{0}'; 
                 '''.format(token["username"])    
             res = jsonify(await conn.fetch(sql))[0]
             if(res["status"] != 1):
                 new_token = jwt.encode({"id_user":res["id_user"], "username":res["username"],"is_admin":0}, request.app.config.SECRET)
                 sql = '''
-                    UPDATE users set status = true, token = '{0}' where username = '{1}';
+                    UPDATE user_person set status = true, token = '{0}' where username = '{1}';
                     '''.format(new_token,token["username"])
                 activate = await conn.execute(sql)
                 return response.json({"description": "OK",'status': 200, 'message': 'Your account has been activated successfully'}, status=200)
@@ -47,14 +47,14 @@ async def changepassword(request):
             async with pool.acquire() as conn:
                 sql = '''
                         SELECT password
-                        FROM users where id_user={0}; 
+                        FROM user_person where id_user={0}; 
                     '''.format(id_user)    
                 oldpass = jsonify(await conn.fetch(sql))[0]["password"]
                 old_pass = hashlib.sha256(data['old_password'].encode()).hexdigest()
                 new_pass = hashlib.sha256(data['new_password'].encode()).hexdigest()
                 if(old_pass == oldpass):
                     sql = """ 
-                    UPDATE users set password = '{0}' where id_user = {1}
+                    UPDATE user_person set password = '{0}' where id_user = {1}
                     """.format(new_pass,id_user)
                     ex = await conn.execute(sql)
                     return response.json({"description": "OK",'status': 200, 'message': 'Successfully change password'}, status=200)
@@ -74,7 +74,7 @@ async def resetpass(request):
             if re.search(regex, data["email"]):                 
                 async with pool.acquire() as conn:
                     sql = """
-                    SELECT status from users where email = '{0}' and username = '{1}';
+                    SELECT status from user_person where email = '{0}' and username = '{1}';
                     """.format(data["email"],data["username"])
                     rows = await conn.fetch(sql)
                     if(bool(rows)):
@@ -105,7 +105,7 @@ async def resetpass(request):
                             s.login(msg['From'], password) 
                             s.sendmail(msg['From'], [msg['To']], msg.as_string())            
                             sql = """
-                            UPDATE users set password = '{0}' where username = '{1}';
+                            UPDATE user_person set password = '{0}' where username = '{1}';
                             """.format(passHash,data["username"]) 
                             ex = await conn.execute(sql) 
                             return response.json({"description": "OK",'status': 200, 'message': 'Forget password request sent. Check email for new password'}, status=200)

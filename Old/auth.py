@@ -53,7 +53,7 @@ async def login(request):
         async with pool.acquire() as conn:
             sql = '''
                     SELECT *
-                    FROM users where username='{0}'; 
+                    FROM user_person where username='{0}'; 
                 '''.format(data["username"])    
             rows = await conn.fetch(sql)
             if(bool(rows)):
@@ -89,7 +89,7 @@ async def register(request):
         async with pool.acquire() as conn:
             token = jwt.encode({"username":data["username"],"is_admin":0}, request.app.config.SECRET)
             sql = '''
-                        insert into users (username,email,password)
+                        insert into user_person (username,email,password)
                         values ('{0}','{1}','{2}'); 
                     '''.format(data["username"],data["email"],hashlib.sha256(data["password"].encode()).hexdigest())    
             rows = await conn.execute(sql)

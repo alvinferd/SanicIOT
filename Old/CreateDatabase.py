@@ -10,7 +10,7 @@ connect = psycopg2.connect(database=database, user=user, password=password, host
 curs = connect.cursor()
 curs.execute("ROLLBACK")
 
-curs.execute('''create table users(
+curs.execute('''create table user_person(
                     id_user serial primary key,
                     username varchar (255) not null UNIQUE,
                     email varchar (255) not null UNIQUE,                    
@@ -32,7 +32,7 @@ curs.execute('''create table users(
                     id_hardware integer not null, 
                     id_user integer not null, 
                     foreign key (id_hardware) references hardware (id_hardware) on update cascade on delete cascade,
-                    foreign key (id_user) references users (id_user) on update cascade on delete cascade
+                    foreign key (id_user) references user_person (id_user) on update cascade on delete cascade
                 );
                 create table sensor(
                     id_sensor serial primary key, 

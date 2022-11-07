@@ -40,8 +40,8 @@ async def listnode(request):
     pool = request.app.config['pool']
     async with pool.acquire() as conn:
         sql = '''
-                SELECT node.id_node, node.name, node.location, node.id_hardware, node.id_user from node INNER join users on node.id_user = users.id_user
-                where users.token = '{0}'; 
+                SELECT node.id_node, node.name, node.location, node.id_hardware, node.id_user from node INNER join user_person on node.id_user = user_person.id_user
+                where user_person.token = '{0}'; 
             '''.format(request.token)
         rows = await conn.fetch(sql)
         return response.json({'status': 200, 'data': jsonify(rows)}, status=200)
