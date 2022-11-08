@@ -38,12 +38,17 @@ async def addnode(request):
 @protected
 async def listnode(request):
     pool = request.app.config['pool']
+    authtoken = jwt.decode(
+                request.token, request.app.config.SECRET, algorithms=["HS256"]
+            )
+    id_userx = authtoken["username"]
     async with pool.acquire() as conn:
         sql = '''
                 SELECT node.id_node, node.name, node.location, node.id_hardware, node.id_user from node INNER join user_person on node.id_user = user_person.id_user
-                where user_person.token = '{0}'; 
-            '''.format(request.token)
+                where user_person.username = '{0}'; 
+            '''.format(id_userx)
         rows = await conn.fetch(sql)
+        print(sql,rows)
         return response.json({'status': 200, 'data': jsonify(rows)}, status=200)
 
 @protected

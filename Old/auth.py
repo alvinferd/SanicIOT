@@ -58,12 +58,12 @@ async def login(request):
             rows = await conn.fetch(sql)
             if(bool(rows)):
                 res = (jsonify(rows)[0])
-                iduser, username, realpass, isactive, isadmin = res["id_user"], res["username"], res["password"], res["status"], res["is_admin"]
+                iduser, username, realpass, isactive, isadmin = res["id_user"], res["username"], res["password"], res["status"], res["isadmin"]
                 hashpass = hashlib.sha256(data['password'].encode()).hexdigest()
                 if(hashpass == realpass):
                     if(isactive):
-                        token = res["token"]
-                        #token = jwt.encode({"username":username,"is_admin":isadmin}, request.app.config.SECRET)
+                        #token = res["token"]
+                        token = jwt.encode({"username":username,"is_admin":isadmin,"id_user":iduser}, request.app.config.SECRET)
                         return response.json({"description": "OK",'status': 200, 'token': token}, status=200)
                     else:
                         return response.json({"description": "Forbidden",'status': 403, 'message': "Account have not active yet"}, status=403)
