@@ -15,10 +15,10 @@ async def addnode(request):
                 rows = await conn.fetch(sql)
                 if(bool(rows)):
                     res_hardware = jsonify(rows)[0]
-                    if(res_hardware["type"] == "Single-Board Computer" or res_hardware["type"] == "Microcontroller Unit"):
+                    if(res_hardware["type"] == "single-board computer" or res_hardware["type"] == "microcontroller unit"):
                         valid = 1
                     else :
-                        return response.json({"description": "Bad Request",'status': 400, "message": "Hardware type not match, type should be Single-Board Computer or Microcontroller Unit"}, status=400)                               
+                        return response.json({"description": "Bad Request",'status': 400, "message": "Hardware type not match, type should be single-board computer or microcontroller unit"}, status=400)                               
                 else:   
                     return response.json({"description": "Bad Request",'status': 400, "message": "Id hardware not found"}, status=400)                           
             else:
@@ -60,17 +60,14 @@ async def detailnode(request, id_node: int):
     pool = request.app.config['pool']
     async with pool.acquire() as conn:
         sql = '''
-                SELECT id_user from node where id_node = {0}; 
+                SELECT * from node where id_node = {0}; 
             '''.format(id_node)
         rows = await conn.fetch(sql)
         if(bool(rows)):
-            iduser = jsonify(rows)[0]["id_user"]
+            res = jsonify(rows)[0]
+            iduser = res["id_user"]
             if(id_user == iduser or authtoken["is_admin"] == 1):
-                sql = '''
-                        SELECT * from node 
-                        where id_node = {0}; 
-                    '''.format(id_node)
-                rowsFinal = jsonify(await conn.fetch(sql))[0]
+                rowsFinal = res
                 sql = '''
                         SELECT hardware.name, hardware.type from hardware 
                         left join node on hardware.id_hardware = node.id_hardware 
@@ -116,10 +113,10 @@ async def editnode(request, id_node: int):
                         rows = await conn.fetch(sql)
                         if(bool(rows)):
                             res_hardware = jsonify(rows)[0]
-                            if(res_hardware["type"] == "Single-Board Computer" or res_hardware["type"] == "Microcontroller Unit"):
+                            if(res_hardware["type"] == "single-board computer" or res_hardware["type"] == "microcontroller unit"):
                                 valid = 1
                             else :
-                                return response.json({"description": "Bad Request",'status': 400, "message": "Hardware type not match, type should be Single-Board Computer or Microcontroller Unit"}, status=400)                               
+                                return response.json({"description": "Bad Request",'status': 400, "message": "Hardware type not match, type should be single-board computer or microcontroller unit"}, status=400)                               
                         else:   
                             return response.json({"description": "Bad Request",'status': 400, "message": "Id hardware not found"}, status=400)                           
                     else:

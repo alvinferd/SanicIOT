@@ -7,10 +7,10 @@ async def addhardware(request):
 	data = request.json	
 	try:
 		if (data["name"] and data["type"] and data["description"]):
-			if(data["type"] == "Single-Board Computer" or data["type"] == "Microcontroller Unit" or data["type"] == "Sensor"):
+			if(data["type"] == "single-board computer" or data["type"] == "microcontroller unit" or data["type"] == "sensor"):
 				valid=1
 			else:	
-				return response.json({"description": "Bad Request",'status': 400, "message": "Type must Single-Board Computer, Microcontroller Unit, or Sensor"}, status=400)	    					
+				return response.json({"description": "Bad Request",'status': 400, "message": "Type must single-board computer, microcontroller unit, or sensor"}, status=400)	    					
 		else:
 			return response.json({"description": "Bad Request",'status': 400, "message": "Empty request body"}, status=400)	    	
 	except:
@@ -29,10 +29,10 @@ async def edithardware(request, id_hardware: int):
 	data = request.json	
 	try:
 		if (data["name"] and data["type"] and data["description"]):
-			if(data["type"] == "Single-Board Computer" or data["type"] == "Microcontroller Unit" or data["type"] == "Sensor"):
+			if(data["type"] == "single-board computer" or data["type"] == "microcontroller unit" or data["type"] == "sensor"):
 				valid=1
 			else:	
-				return response.json({"description": "Bad Request",'status': 400, "message": "Type must Single-Board Computer, Microcontroller Unit, or Sensor"}, status=400)	    					
+				return response.json({"description": "Bad Request",'status': 400, "message": "Type must single-board computer, microcontroller unit, or sensor"}, status=400)	    					
 		else:
 			return response.json({"description": "Bad Request",'status': 400, "message": "Empty request body"}, status=400)	    	
 	except:
@@ -88,7 +88,7 @@ async def detailhardware(request, id_hardware: int):
                 valid = await conn.fetch(sql)
                 if(bool(valid)):               
 	                rowsFinal = jsonify(valid)[0]
-	                if(rowsFinal["type"] == "Sensor"):
+	                if(rowsFinal["type"] == "sensor"):
 		                sql = '''
 		                        SELECT name, unit from sensor 
 		                        where id_hardware = {0}; 
@@ -128,7 +128,7 @@ async def userhardware(request):
 #                valid = await conn.fetch(sql)
 #                if(bool(valid)):               
 #	                rowsFinal = jsonify(valid)[0]
-#	                if(rowsFinal["type"] == "Sensor"):
+#	                if(rowsFinal["type"] == "sensor"):
 		                sql = '''
 		                        SELECT * from node
 		                        where id_user = {0}; 

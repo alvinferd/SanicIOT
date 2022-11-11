@@ -62,7 +62,6 @@ async def login(request):
                 hashpass = hashlib.sha256(data['password'].encode()).hexdigest()
                 if(hashpass == realpass):
                     if(isactive):
-                        #token = res["token"]
                         token = jwt.encode({"username":username,"is_admin":isadmin,"id_user":iduser}, request.app.config.SECRET)
                         return response.json({"description": "OK",'status': 200, 'token': token}, status=200)
                     else:

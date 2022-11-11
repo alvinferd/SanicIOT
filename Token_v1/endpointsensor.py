@@ -22,7 +22,7 @@ async def addsensor(request):
                     if(res_hardware["type"] == "Sensor"):
                         valid = 1
                     else :
-                        return response.json({"description": "Bad Request",'status': 400, "message": "Hardware type not match, type should be Sensor"}, status=400)                               
+                        return response.json({"description": "Bad Request",'status': 400, "message": "Hardware type not match, type should be sensor"}, status=400)                               
                 else:   
                     return response.json({"description": "Bad Request",'status': 400, "message": "Id hardware not found"}, status=400)                           
                 sql = """
