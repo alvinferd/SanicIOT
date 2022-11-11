@@ -53,5 +53,5 @@ async def close_connection(app, loop):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000,
-            access_log=True, debug=True)
+    app.run(host="0.0.0.0", port=8080,
+            access_log=True, debug=False)
