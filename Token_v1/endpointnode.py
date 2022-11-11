@@ -48,7 +48,6 @@ async def listnode(request):
                 where user_person.username = '{0}'; 
             '''.format(id_userx)
         rows = await conn.fetch(sql)
-        print(sql,rows)
         return response.json({'status': 200, 'data': jsonify(rows)}, status=200)
 
 @protected
