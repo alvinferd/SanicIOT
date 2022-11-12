@@ -1,12 +1,11 @@
 from sanic import response
-from auth import protected,jsonify
+from auth import check_token,jsonify
 import hashlib
 import jwt
 import smtplib
 import email.message
 import re, random, string
 
-@protected
 async def healthcheck(request):
     return response.json({"description": "OK",'status': 200, 'message': "working"}, status=200)
 
@@ -34,36 +33,37 @@ async def activation(request):
     except:
         return response.json({"description": "Bad Request",'status': 400, 'message': 'Invalid token'}, status=200)           
 
-@protected
 async def changepassword(request):
-    data = request.json 
-    authtoken = jwt.decode(
-            request.token, request.app.config.SECRET, algorithms=["HS256"]
-        )
-    id_user = authtoken["id_user"]
-    pool = request.app.config['pool']
-    try:
-        if ( data["old_password"] and data["new_password"] ):
-            async with pool.acquire() as conn:
-                sql = '''
-                        SELECT password
-                        FROM user_person where id_user={0}; 
-                    '''.format(id_user)    
-                oldpass = jsonify(await conn.fetch(sql))[0]["password"]
-                old_pass = hashlib.sha256(data['old_password'].encode()).hexdigest()
-                new_pass = hashlib.sha256(data['new_password'].encode()).hexdigest()
-                if(old_pass == oldpass):
-                    sql = """ 
-                    UPDATE user_person set password = '{0}' where id_user = {1}
-                    """.format(new_pass,id_user)
-                    ex = await conn.execute(sql)
-                    return response.json({"description": "OK",'status': 200, 'message': 'Successfully change password'}, status=200)
-                else:   
-                    return response.json({"description": "Forbidden",'status': 403, 'message': 'Old password is incorect'}, status=403)                
-        else:
-            return response.json({"description": "Bad Request",'status': 400, "message": "Empty request body"}, status=400)         
-    except:
-        return response.json({"description": "Bad Request",'status': 400, "message": "Missing parameter"}, status=400)
+    authentication = check_token(request)
+    if(authentication[0]):
+        authtoken = authentication[1]    
+        data = request.json 
+        id_user = authtoken["id_user"]
+        pool = request.app.config['pool']
+        try:
+            if ( data["old_password"] and data["new_password"] ):
+                async with pool.acquire() as conn:
+                    sql = '''
+                            SELECT password
+                            FROM user_person where id_user={0}; 
+                        '''.format(id_user)    
+                    oldpass = jsonify(await conn.fetch(sql))[0]["password"]
+                    old_pass = hashlib.sha256(data['old_password'].encode()).hexdigest()
+                    new_pass = hashlib.sha256(data['new_password'].encode()).hexdigest()
+                    if(old_pass == oldpass):
+                        sql = """ 
+                        UPDATE user_person set password = '{0}' where id_user = {1}
+                        """.format(new_pass,id_user)
+                        ex = await conn.execute(sql)
+                        return response.json({"description": "OK",'status': 200, 'message': 'Successfully change password'}, status=200)
+                    else:   
+                        return response.json({"description": "Forbidden",'status': 403, 'message': 'Old password is incorect'}, status=403)                
+            else:
+                return response.json({"description": "Bad Request",'status': 400, "message": "Empty request body"}, status=400)         
+        except:
+            return response.json({"description": "Bad Request",'status': 400, "message": "Missing parameter"}, status=400)
+    else:
+        return response.json({"description": "Forbidden",'status': 403, 'message': "You are unauthorized, invalid token."}, status=403)
 
 async def resetpass(request):
     data = request.json 
@@ -119,7 +119,6 @@ async def resetpass(request):
             return response.json({"description": "Bad Request",'status': 400, "message": "Empty request body"}, status=400)         
     except:
         return response.json({"description": "Bad Request",'status': 400, "message": "Missing parameter"}, status=400)
-
 
 
 def add_routes_user(app):

@@ -19,9 +19,6 @@ add_routes_sensor(app)
 add_routes_channel(app)
 app.config.SECRET = "KEEP_IT_SECRET_KEEP_IT_SAFE"
 
-
-#asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())  ##Do not working on windows
-
 # References listener : https://sanic.dev/en/guide/basics/listeners.html#attaching-a-listener
 @app.listener('before_server_start')
 async def register_db(app, loop):
@@ -32,7 +29,6 @@ async def register_db(app, loop):
         user='postgres', password='postgres', host='localhost',
         port=5432, database='postgres'
     )
-    #asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())  ##Do not working on windows
     app.config['pool'] = await create_pool(
         dsn=conn,
         # in bytes
@@ -53,5 +49,5 @@ async def close_connection(app, loop):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080,
-            access_log=True, debug=False)
+    app.run(host="0.0.0.0", port=8000,
+            access_log=True, fast=True)

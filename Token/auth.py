@@ -21,30 +21,14 @@ def jsonify(records):
 
 
 def check_token(request):
-    if not request.token:
-        return False
     try:
-        jwt.decode(
+        authentication = jwt.decode(
             request.token, request.app.config.SECRET, algorithms=["HS256"]
         )
     except jwt.exceptions.InvalidTokenError:
-        return False
+        return (False,'')
     else:
-        return True
-
-
-def protected(wrapped):
-    def decorator(f):
-        @wraps(f)
-        async def decorated_function(request, *args, **kwargs):
-            is_authenticated = check_token(request)
-            if is_authenticated:
-                response = await f(request, *args, **kwargs)
-                return response
-            else:               
-                return sanic.response.json({"description": "Forbidden",'status': 403, 'message': "You are unauthorized, invalid token."}, status=403)
-        return decorated_function
-    return decorator(wrapped)
+        return (True, authentication)
 
 async def login(request):
     data = request.json
