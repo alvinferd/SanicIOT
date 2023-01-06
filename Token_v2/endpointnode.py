@@ -215,6 +215,10 @@ async def editnode(request, id_node: int):
         return response.json({"description": "Forbidden",'status': 403, 'message': "You are unauthorized, invalid token."}, status=403)
 
 async def mynode(request):
+    try:
+        limits = request.args["limit"][0]
+    except:
+        limits = 50
     authentication = check_token(request)
     if(authentication[0]):
         authtoken = authentication[1]    
@@ -231,8 +235,8 @@ async def mynode(request):
                 sql = '''
                             SELECT feed.time, feed.value from feed
                             left join node on feed.id_node = node.id_node
-                            where feed.id_node = {0} ORDER BY time DESC limit 50; 
-                        '''.format(res[x]["id_node"])
+                            where feed.id_node = {0} ORDER BY time DESC limit {1}; 
+                        '''.format(res[x]["id_node"],limits)
                 try:
                     dmp = jsonify(await conn.fetch(sql))
                     res[x]["feed"] = dmp
@@ -245,6 +249,10 @@ async def mynode(request):
         return response.json({"description": "Forbidden",'status': 403, 'message': "You are unauthorized, invalid token."}, status=403)
 
 async def detailnode(request, id_node: int):
+    try:
+        limits = request.args["limit"][0]
+    except:
+        limits = 50
     authentication = check_token(request)
     if(authentication[0]):
         authtoken = authentication[1]      
@@ -263,8 +271,8 @@ async def detailnode(request, id_node: int):
                     sql = '''
                             SELECT feed.time, feed.value from feed
                             left join node on feed.id_node = node.id_node
-                            where feed.id_node = {0} ORDER BY time DESC limit 50; 
-                        '''.format(id_node)
+                            where feed.id_node = {0} ORDER BY time DESC limit {1}; 
+                        '''.format(id_node,limits)
                     try:
                         dmp = jsonify(await conn.fetch(sql))
                         rowsFinal["feed"] = dmp

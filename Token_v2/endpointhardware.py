@@ -58,7 +58,10 @@ async def edithardware(request, id_hardware: int):
 					where id_hardware = {3};
 				""".format(data["name"], data["type"], data["description"],str(id_hardware))
 				rows = await conn.execute(sql)
-				return response.json({"description": "OK",'status': 200, 'message':'Successfully edit hardware, id: {0}'.format(str(id_hardware))}, status=200)		
+				if(rows=="UPDATE 0"):
+					return response.json({"description": "Bad Request",'status': 400, "message": "Id hardware not found"}, status=400)	
+				else:		
+					return response.json({"description": "OK",'status': 200, 'message':'Successfully edit hardware, id: {0}'.format(str(id_hardware))}, status=200)		
 		else:
 			return response.json({"description": "Forbidden",'status': 403, 'message': "You are not admin"}, status=403)
 	else:
