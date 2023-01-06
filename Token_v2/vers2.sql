@@ -25,9 +25,9 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.feed (
-    "time" timestamp without time zone,
-    value double precision[10],
-    id_node integer NOT NULL
+	 "time" timestamp without time zone,
+	 value double precision[10],
+	 id_node integer NOT NULL
 );
 
 
@@ -38,10 +38,10 @@ ALTER TABLE public.feed OWNER TO postgres;
 --
 
 CREATE TABLE public.hardware (
-    id_hardware integer NOT NULL,
-    name character varying(255) NOT NULL,
-    type character varying(255) NOT NULL,
-    description character varying(255) NOT NULL
+	 id_hardware integer NOT NULL,
+	 name character varying(255) NOT NULL,
+	 type character varying(255) NOT NULL,
+	 description character varying(255) NOT NULL
 );
 
 
@@ -52,12 +52,12 @@ ALTER TABLE public.hardware OWNER TO postgres;
 --
 
 CREATE SEQUENCE public.hardware_id_hardware_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	 AS integer
+	 START WITH 1
+	 INCREMENT BY 1
+	 NO MINVALUE
+	 NO MAXVALUE
+	 CACHE 1;
 
 
 ALTER TABLE public.hardware_id_hardware_seq OWNER TO postgres;
@@ -74,14 +74,14 @@ ALTER SEQUENCE public.hardware_id_hardware_seq OWNED BY public.hardware.id_hardw
 --
 
 CREATE TABLE public.node (
-    id_node integer NOT NULL,
-    id_user integer NOT NULL,
-    id_hardware_node integer NOT NULL,
-    id_hardware_sensor integer[10],    
-    name character varying(255) NOT NULL,
-    location character varying(255) NOT NULL,
-    field_sensor text[10] NOT NULL DEFAULT '{"","","","","","","","","",""}',
-    is_public BOOLEAN NOT NULL DEFAULT false
+	 id_node integer NOT NULL,
+	 id_user integer NOT NULL,
+	 id_hardware_node integer NOT NULL,
+	 id_hardware_sensor integer[10],	 
+	 name character varying(255) NOT NULL,
+	 location character varying(255) NOT NULL,
+	 field_sensor text[10] NOT NULL DEFAULT '{"","","","","","","","","",""}',
+	 is_public BOOLEAN NOT NULL DEFAULT false
 );
 
 
@@ -92,12 +92,12 @@ ALTER TABLE public.node OWNER TO postgres;
 --
 
 CREATE SEQUENCE public.node_id_node_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	 AS integer
+	 START WITH 1
+	 INCREMENT BY 1
+	 NO MINVALUE
+	 NO MAXVALUE
+	 CACHE 1;
 
 
 ALTER TABLE public.node_id_node_seq OWNER TO postgres;
@@ -114,12 +114,12 @@ ALTER SEQUENCE public.node_id_node_seq OWNED BY public.node.id_node;
 --
 
 CREATE TABLE public.user_person (
-    id_user integer NOT NULL,
-    email character varying(255) NOT NULL,
-    username character varying(255) NOT NULL,
-    password character varying(255) NOT NULL,
-    status boolean DEFAULT false NOT NULL,
-    isadmin boolean DEFAULT false NOT NULL
+	 id_user integer NOT NULL,
+	 email character varying(255) NOT NULL UNIQUE,
+	 username character varying(255) NOT NULL UNIQUE,
+	 password character varying(255) NOT NULL,
+	 status boolean DEFAULT false NOT NULL,
+	 isadmin boolean DEFAULT false NOT NULL
 );
 
 
@@ -130,12 +130,12 @@ ALTER TABLE public.user_person OWNER TO postgres;
 --
 
 CREATE SEQUENCE public.user_person_id_user_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
+	 AS integer
+	 START WITH 1
+	 INCREMENT BY 1
+	 NO MINVALUE
+	 NO MAXVALUE
+	 CACHE 1;
 
 
 ALTER TABLE public.user_person_id_user_seq OWNER TO postgres;
@@ -259,6 +259,14 @@ COPY public.user_person (id_user, email, username, password, status, isadmin) FR
 \.
 
 
+COPY public.node (id_node, id_user, id_hardware_node, id_hardware_sensor, name, location,  field_sensor) FROM stdin;
+1	1	1	{NULL,2,NULL,4,NULL,NULL,NULL,NULL,NULL,NULL}	nodeTest	nodeTest	{NULL,saha,NULL,sihi,NULL,NULL,NULL,NULL,NULL,NULL}
+2	1	3	{NULL,2,NULL,4,NULL,NULL,NULL,NULL,NULL,NULL}	nodeTest	nodeTest	{NULL,saha,NULL,sihi,NULL,NULL,NULL,NULL,NULL,NULL}
+3	1	3	{NULL,2,NULL,4,NULL,NULL,NULL,NULL,NULL,NULL}	nodeTest	nodeTest	{NULL,saha,NULL,sihi,NULL,NULL,NULL,NULL,NULL,NULL}
+4	1	5	{NULL,2,NULL,4,NULL,NULL,NULL,NULL,NULL,NULL}	nodeTest	nodeTest	{NULL,saha,NULL,sihi,NULL,NULL,NULL,NULL,NULL,NULL}
+5	1	5	{NULL,2,NULL,4,NULL,NULL,NULL,NULL,NULL,NULL}	nodeTest	nodeTest	{NULL,saha,NULL,sihi,NULL,NULL,NULL,NULL,NULL,NULL}
+6	1	3	{NULL,2,NULL,4,NULL,NULL,NULL,NULL,NULL,NULL}	nodeTest	nodeTest	{NULL,saha,NULL,sihi,NULL,NULL,NULL,NULL,NULL,NULL}
+\.
 --
 -- Name: hardware_id_hardware_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -286,7 +294,7 @@ SELECT pg_catalog.setval('public.user_person_id_user_seq', 38, true);
 --
 
 ALTER TABLE ONLY public.hardware
-    ADD CONSTRAINT hardware_pkey PRIMARY KEY (id_hardware);
+	 ADD CONSTRAINT hardware_pkey PRIMARY KEY (id_hardware);
 
 
 --
@@ -294,7 +302,7 @@ ALTER TABLE ONLY public.hardware
 --
 
 ALTER TABLE ONLY public.node
-    ADD CONSTRAINT node_pkey PRIMARY KEY (id_node);
+	 ADD CONSTRAINT node_pkey PRIMARY KEY (id_node);
 
 
 --
@@ -302,7 +310,7 @@ ALTER TABLE ONLY public.node
 --
 
 ALTER TABLE ONLY public.user_person
-    ADD CONSTRAINT user_person_pkey PRIMARY KEY (id_user);
+	 ADD CONSTRAINT user_person_pkey PRIMARY KEY (id_user);
 
 
 --
@@ -310,7 +318,7 @@ ALTER TABLE ONLY public.user_person
 --
 
 ALTER TABLE ONLY public.feed
-    ADD CONSTRAINT feed_id_node_fkey FOREIGN KEY (id_node) REFERENCES public.node(id_node) ON UPDATE CASCADE ON DELETE CASCADE;
+	 ADD CONSTRAINT feed_id_node_fkey FOREIGN KEY (id_node) REFERENCES public.node(id_node) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -318,7 +326,7 @@ ALTER TABLE ONLY public.feed
 --
 
 ALTER TABLE ONLY public.node
-    ADD CONSTRAINT node_id_hardware_fkey FOREIGN KEY (id_hardware_node) REFERENCES public.hardware(id_hardware) ON UPDATE CASCADE;
+	 ADD CONSTRAINT node_id_hardware_fkey FOREIGN KEY (id_hardware_node) REFERENCES public.hardware(id_hardware) ON UPDATE CASCADE;
 
 
 --
@@ -326,7 +334,7 @@ ALTER TABLE ONLY public.node
 --
 
 ALTER TABLE ONLY public.node
-    ADD CONSTRAINT node_id_user_fkey FOREIGN KEY (id_user) REFERENCES public.user_person(id_user) ON UPDATE CASCADE;
+	 ADD CONSTRAINT node_id_user_fkey FOREIGN KEY (id_user) REFERENCES public.user_person(id_user) ON UPDATE CASCADE;
 
 
 --
